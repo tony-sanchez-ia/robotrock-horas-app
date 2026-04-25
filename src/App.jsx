@@ -6,8 +6,13 @@ import BottomNav from './components/BottomNav';
 import HoursScreen from './components/HoursScreen';
 import ExpensesScreen from './components/ExpensesScreen';
 import SummaryScreen from './components/SummaryScreen';
+import AdminScreen from './components/AdminScreen';
 
 export default function App() {
+  if (window.location.pathname === '/admin') {
+    return <AdminScreen />;
+  }
+
   const [employee, setEmployee] = useState(null);
   const [pinOk, setPinOk] = useState(false);
   const [tab, setTab] = useState('hours');

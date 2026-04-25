@@ -7,6 +7,7 @@ import authRoutes from './routes/auth.js';
 import hoursRoutes from './routes/hours.js';
 import expensesRoutes from './routes/expenses.js';
 import summaryRoutes from './routes/summary.js';
+import adminRoutes from './routes/admin.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/hours', hoursRoutes);
 app.use('/api/expenses', expensesRoutes);
 app.use('/api/summary', summaryRoutes);
+app.use('/api/admin', adminRoutes);
 
 // In production, serve the Vite-built frontend
 if (process.env.NODE_ENV === 'production') {
