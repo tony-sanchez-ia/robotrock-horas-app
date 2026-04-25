@@ -7,13 +7,21 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
+      includeAssets: ['favicon.svg'],
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,png,svg,ico,woff2}']
+      },
       manifest: {
+        id: '/',
         name: 'Robot Rock Alive',
         short_name: 'RobotRock',
         description: 'Control de Horas y Gastos',
+        start_url: '/',
+        scope: '/',
         theme_color: '#0a0a0a',
         background_color: '#0a0a0a',
         display: 'standalone',
+        orientation: 'portrait',
         icons: [
           {
             src: '/icon-192.png',
@@ -23,8 +31,13 @@ export default defineConfig({
           {
             src: '/icon-512.png',
             sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: '/icon-512.png',
+            sizes: '512x512',
             type: 'image/png',
-            purpose: 'any maskable'
+            purpose: 'maskable'
           }
         ]
       }

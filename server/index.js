@@ -29,7 +29,19 @@ app.use('/api/admin', adminRoutes);
 // In production, serve the Vite-built frontend
 if (process.env.NODE_ENV === 'production') {
   const distPath = path.join(__dirname, '..', 'dist');
-  app.use(express.static(distPath));
+  
+  // 1. Servir archivos estáticos PRIMERO (sw.js, manifest.webmanifest, iconos, assets)
+  app.use(express.static(distPath, { 
+    maxAge: '1h',
+    setHeaders: (res, filePath) => {
+      // Service Worker no debe cachearse agresivamente
+      if (filePath.endsWith('sw.js') || filePath.endsWith('manifest.webmanifest')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    }
+  }));
+
+  // 2. SPA fallback: SOLO rutas que NO son archivos reales ni API
   app.use((req, res, next) => {
     if (req.method === 'GET' && !req.path.startsWith('/api')) {
       res.sendFile(path.join(distPath, 'index.html'));
