@@ -1,0 +1,41 @@
+// Robot Rock Alive — Database Schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Employee {
+  id        Int            @id @default(autoincrement())
+  name      String         @unique
+  pinHash   String
+  createdAt DateTime       @default(now())
+  hours     HourEntry[]
+  expenses  ExpenseEntry[]
+}
+
+model HourEntry {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  fecha      String   // YYYY-MM-DD
+  turno      String   // mañana | tarde | noche
+  horas      Float
+  concepto   String   @default("")
+  createdAt  DateTime @default(now())
+}
+
+model ExpenseEntry {
+  id         Int      @id @default(autoincrement())
+  employeeId Int
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  fecha      String   // YYYY-MM-DD
+  tipo       String   // comida | combustible
+  importe    Float
+  concepto   String   @default("")
+  createdAt  DateTime @default(now())
+}
