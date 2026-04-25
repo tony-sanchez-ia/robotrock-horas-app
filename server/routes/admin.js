@@ -57,7 +57,30 @@ router.put('/employees/:id/pin', async (req, res) => {
   }
 });
 
-// 3. Obtener todos los gastos (con modo audio)
+// 3. Crear empleado nuevo
+router.post('/employees', async (req, res) => {
+  try {
+    const { name, pin } = req.body;
+    if (!name || !pin || pin.length !== 4) {
+      return res.status(400).json({ error: 'Falta nombre o el PIN no tiene 4 dígitos' });
+    }
+    const exists = await prisma.employee.findUnique({ where: { name } });
+    if (exists) {
+      return res.status(400).json({ error: 'Ya existe un empleado con ese nombre' });
+    }
+    const salt = await bcrypt.genSalt(10);
+    const pinHash = await bcrypt.hash(pin, salt);
+    const newEmp = await prisma.employee.create({
+      data: { name, pinHash }
+    });
+    res.status(201).json(newEmp);
+  } catch (error) {
+    console.error('Error creating employee:', error);
+    res.status(500).json({ error: 'Error al crear empleado' });
+  }
+});
+
+// 4. Obtener todos los gastos (con modo audio)
 router.get('/expenses', async (req, res) => {
   try {
     const expenses = await prisma.expenseEntry.findMany({

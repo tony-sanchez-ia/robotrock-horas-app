@@ -13,6 +13,10 @@ export default function AdminScreen() {
   const [resetFocusId, setResetFocusId] = useState(null);
   const [newPin, setNewPin] = useState('');
 
+  const [newName, setNewName] = useState('');
+  const [newEmpPin, setNewEmpPin] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+
   const fetchEmployees = async (pass) => {
     try {
       const res = await fetch(`/api/admin/employees`, {
@@ -51,6 +55,33 @@ export default function AdminScreen() {
   const handleLogin = (e) => {
     e.preventDefault();
     fetchEmployees(password);
+  };
+
+  const handleCreateEmployee = async (e) => {
+    e.preventDefault();
+    if (!newName || newEmpPin.length !== 4) return alert('Nombre obligatorio y PIN de 4 dígitos');
+    try {
+      const res = await fetch(`/api/admin/employees`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-admin-password': password 
+        },
+        body: JSON.stringify({ name: newName, pin: newEmpPin })
+      });
+      if (res.ok) {
+        setNewName('');
+        setNewEmpPin('');
+        setIsCreating(false);
+        fetchEmployees(password);
+        alert('Cajero añadido');
+      } else {
+        const err = await res.json();
+        alert(err.error || 'Error al crear la cuenta');
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const handleResetPin = async (id) => {
@@ -119,6 +150,26 @@ export default function AdminScreen() {
         {/* TAB 1: EMPLEADOS */}
         {tab === 'employees' && (
           <div style={{ display: 'grid', gap: '1rem' }}>
+            
+            {/* Formulario Crear Empleado */}
+            <div style={{ backgroundColor: '#1a1a1a', padding: '1rem', borderRadius: '1rem', border: '1px dashed #333' }}>
+              {isCreating ? (
+                <form onSubmit={handleCreateEmployee} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                  <input type="text" className="input" placeholder="Nombre empleado..." value={newName} onChange={e => setNewName(e.target.value)} style={{ flex: 1, minWidth: '150px' }} />
+                  <input type="number" className="input" placeholder="PIN (4)" value={newEmpPin} onChange={e => setNewEmpPin(e.target.value.substring(0,4))} style={{ width: '80px', textAlign: 'center' }} />
+                  <button type="submit" className="button button-primary" style={{ padding: '0.75rem 1.5rem' }}>Añadir</button>
+                  <button type="button" onClick={() => setIsCreating(false)} className="button button-secondary" style={{ padding: '0.75rem 1.5rem' }}>Cancelar</button>
+                </form>
+              ) : (
+                <button onClick={() => setIsCreating(true)} className="button button-primary" style={{ width: '100%', padding: '1rem' }}>
+                  + Añadir Nuevo Usuario
+                </button>
+              )}
+            </div>
+
+            {/* Listado Empleados */}
+            {employees.length === 0 && !isCreating && <p style={{ color: '#888' }}>No hay usuarios todavía.</p>}
+            
             {employees.map(emp => (
               <div key={emp.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#222', padding: '1rem', borderRadius: '1rem' }}>
                 <div style={{ fontSize: '1.125rem', fontWeight: 'bold' }}>{emp.name}</div>
