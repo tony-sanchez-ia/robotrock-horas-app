@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y python3 make g++ sqlite3 openssl && rm 
 # Copiar archivos de dependencias
 COPY package.json package-lock.json ./
 
-# Instalar dependencias puras omitiendo conflictos estrictos de versión con Vite 8
-RUN npm install --legacy-peer-deps
+# Instalar dependencias
+RUN npm ci
 
 # Copiar todo el código (el .dockerignore evita que pase node_modules local o la DB de dev)
 COPY . .
