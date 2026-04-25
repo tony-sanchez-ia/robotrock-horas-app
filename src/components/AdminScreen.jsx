@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import api from '../utils/api';
 import Icon from './Icon';
 
 export default function AdminScreen() {
@@ -16,7 +15,7 @@ export default function AdminScreen() {
 
   const fetchEmployees = async (pass) => {
     try {
-      const res = await fetch(`${api.defaults.baseURL}/admin/employees`, {
+      const res = await fetch(`/api/admin/employees`, {
         headers: { 'x-admin-password': pass }
       });
       if (!res.ok) throw new Error('Contraseña incorrecta o error de servidor');
@@ -32,7 +31,7 @@ export default function AdminScreen() {
 
   const fetchExpenses = async () => {
     try {
-      const res = await fetch(`${api.defaults.baseURL}/admin/expenses`, {
+      const res = await fetch(`/api/admin/expenses`, {
         headers: { 'x-admin-password': password }
       });
       const data = await res.json();
@@ -57,7 +56,7 @@ export default function AdminScreen() {
   const handleResetPin = async (id) => {
     if (newPin.length !== 4) return alert('El PIN debe tener 4 dígitos');
     try {
-      const res = await fetch(`${api.defaults.baseURL}/admin/employees/${id}/pin`, {
+      const res = await fetch(`/api/admin/employees/${id}/pin`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
